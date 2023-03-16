@@ -1,12 +1,12 @@
 # Integration with Shopify
 
-- [Overview](https://paper.dropbox.com/doc/Integration-with-Shopify--AWwjp1YFVnLvktQXWfmutsFeAg-UWEQBPHaJyOQIkNC9Y2bb#:uid=385601843392647891925075&h2=Overview)
-- [Installation / Configuration](https://paper.dropbox.com/doc/Integration-with-Shopify--AWwjp1YFVnLvktQXWfmutsFeAg-UWEQBPHaJyOQIkNC9Y2bb#:uid=011940856419557773821248&h2=Installation-/-Configuration)
-    - [Shopify Theme Modification](https://paper.dropbox.com/doc/Integration-with-Shopify--AWwjp1YFVnLvktQXWfmutsFeAg-UWEQBPHaJyOQIkNC9Y2bb#:h2=Shopify-Theme-Modification)
-    - [settings_schema.json](https://paper.dropbox.com/doc/Integration-with-Shopify--AWwjp1YFVnLvktQXWfmutsFeAg-UWEQBPHaJyOQIkNC9Y2bb#:h2=settings_schema.json)
-    - [imgix.liquid](https://paper.dropbox.com/doc/Integration-with-Shopify--AWwjp1YFVnLvktQXWfmutsFeAg-UWEQBPHaJyOQIkNC9Y2bb#:h2=imgix.liquid)
-    - [Enabling imgix Integration](https://paper.dropbox.com/doc/Integration-with-Shopify--AWwjp1YFVnLvktQXWfmutsFeAg-UWEQBPHaJyOQIkNC9Y2bb#:h2=Enabling-the-imgix-Integration)
-- [Caveats & Warnings](https://paper.dropbox.com/doc/Integration-with-Shopify-AWwjp1YFVnLvktQXWfmutsFeAg-UWEQBPHaJyOQIkNC9Y2bb#:h2=Caveats-&-Warnings)
+- [Overview](#overview)
+- [Installation / Configuration](#installation--configuration)
+    - [Shopify Theme Modification](#shopify-theme-modification)
+    - [settings_schema.json](#settings_schemajson)
+    - [imgix.liquid](#imgixliquid)
+    - [Enabling imgix Integration](#enabling-the-imgix-integration)
+- [Caveats & Warnings](#caveats--warnings)
 
 ----------
 
@@ -32,12 +32,12 @@ After everything is filled out, click **Create Source** to queue your new Source
 
 ## Installation / Configuration
 
-**Shopify Theme Modification**
+### Shopify Theme Modification
 
 To begin serving your content with imgix, you'll need to make two changes to your Shopify theme. Special thanks to Jason Bowman at *Freakdesign* for creating the [initial version](https://freakdesign.com.au/blogs/news/91099207-how-to-use-imgix-with-shopify) of these files. You can access Shopify's theme file editor by going to `Online store > Themes > Customize > Theme actions > Edit Code`.
 
 
-**settings_schema.json**
+### settings_schema.json
 
 The first change lets you configure your imgix installation from inside Shopify's theme settings. Copy the code below to the top of your theme's `Config/settings_schema.json` file, inside the outermost pair of square brackets (`[ ]`). Make sure to add a comma (`,`) to the file following the `}` preceding where you paste this code in the snippet. You can also search for `settings_schema.json` in the search bar at the top to find it.
 
@@ -71,7 +71,7 @@ The first change lets you configure your imgix installation from inside Shopify'
 },
 ```
 
-**imgix.liquid**
+### imgix.liquid
 
 The second file adds a new Liquid tag that helps users generate imgix URLs. This time, create a new file in the `Snippets` directory of your theme named `imgix.liquid`. Copy the code below into that file, and save it:
 
@@ -136,7 +136,7 @@ The second file adds a new Liquid tag that helps users generate imgix URLs. This
 {% endcapture %}{{ IMGIX | strip | replace:'  ' | strip_newlines }}
 ```
 
-**Enabling the imgix Integration**
+### Enabling the imgix Integration
 
 Now that you've set up your Shopify theme to work with imgix, you can enable imgix in your theme settings. Head to `Online store > Themes > Customize`. Once there, you'll see an **imgix** option in the left-hand sidebar. Click on this to configure your imgix setup. It should look something like the following:
 
