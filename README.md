@@ -116,7 +116,7 @@ The second file adds a new Liquid tag that helps users generate imgix URLs. This
       {% assign imgWithQuerystring = "?" %}
 
       {% if src contains '?' %}
-        {% assign imgWithQuerystring = '&' %}
+        {% assign imgWithQuerystring = '' %}
       {% endif %}
 
       {% for _filter in filters %}
@@ -157,7 +157,7 @@ After:
 
 ```liquid
 {% assign feat_img_url = product.featured_image | img_url:'master' %}
-{% include 'imgix' src:feat_img_url w:600 auto:'format' flip:'v' %}
+{% render 'imgix', src:feat_img_url w:600 auto:'format' flip:'v' %}
 ```
 
 It's a good idea to always use the `master` variant of Shopify's images, and let imgix handle the resizing. That way, you'll always get the best quality image possible. Jason Bowman has created a [great demo page](https://freakdesign.com.au/pages/imgix-and-shopify-optimisation-demo) showcasing more potential uses of this tag.
@@ -168,13 +168,13 @@ Here's another example of using imgix to easily build a responsive image using `
 {% assign feat_img_url = product.featured_image | img_url:'master' %}
 
 <img
-  src="{% include 'imgix' src:feat_img_url w:960 auto:'format' %}"
+  src="{% render 'imgix', src:feat_img_url w:960 auto:'format' %}"
   srcset="
-    {% include 'imgix' src:feat_img_url w:320 auto:'format' %} 320w,
-    {% include 'imgix' src:feat_img_url w:640 auto:'format' %} 640w,
-    {% include 'imgix' src:feat_img_url w:960 auto:'format' %} 960w,
-    {% include 'imgix' src:feat_img_url w:1280 auto:'format' %} 1280w,
-    {% include 'imgix' src:feat_img_url w:1600 auto:'format' %} 1600w
+    {% render 'imgix', src:feat_img_url w:320 auto:'format' %} 320w,
+    {% render 'imgix', src:feat_img_url w:640 auto:'format' %} 640w,
+    {% render 'imgix', src:feat_img_url w:960 auto:'format' %} 960w,
+    {% render 'imgix', src:feat_img_url w:1280 auto:'format' %} 1280w,
+    {% render 'imgix', src:feat_img_url w:1600 auto:'format' %} 1600w
   "
   sizes="(min-width: 375px) 50vw, 100vw"
   alt="My awesome product"
@@ -194,7 +194,7 @@ Shopify’s in-house templating language also allows for image resizing, similar
   {% for image in product.images %}
     <li class="grid__item">
       <a data-image-id="{{ image.id }}" href="{{ image.src | img_url: '1024x1024' }}" class="product-single__thumbnail">
-        <img src="{% include 'imgix' src:image.master h:263 %}" alt="{{ image.alt | escape }}">
+        <img src="{% render 'imgix', src:image.master h:263 %}" alt="{{ image.alt | escape }}">
       </a>
     </li>
   {% endfor %}
