@@ -11,7 +11,7 @@
 ----------
 
 ## Disclaimer: 
-## This guide presents a working solution for integrating imgix into your Shopify site. All configurations are made to work on top of Shopify’s front end and CDN, but will have certain limitations that are detailed in our [caveats & warnings](https://paper.dropbox.com/doc/Integration-with-Shopify--AXEJ3MQzJw1tBd~~gICO1WX1Ag-UWEQBPHaJyOQIkNC9Y2bb#:h2=Caveats-&-Warnings) section below. We cannot, unfortunately, guarantee expected results if at any time Shopify were to make changes to its system in ways that create breaking issues with this guide.
+## This guide presents a working solution for integrating imgix into your Shopify site. All configurations are made to work on top of Shopify’s front end and CDN, but will have certain limitations that are detailed in our [caveats & warnings](#caveats--warnings) section below. We cannot, unfortunately, guarantee expected results if at any time Shopify were to make changes to its system in ways that create breaking issues with this guide.
 
 ## Overview
 
