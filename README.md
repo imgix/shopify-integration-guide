@@ -2,15 +2,16 @@
 
 - [Overview](#overview)
 - [Installation / Configuration](#installation--configuration)
-    - [Shopify Theme Modification](#shopify-theme-modification)
-    - [settings_schema.json](#settings_schemajson)
-    - [imgix.liquid](#imgixliquid)
-    - [Enabling imgix Integration](#enabling-the-imgix-integration)
+  - [Shopify Theme Modification](#shopify-theme-modification)
+  - [settings_schema.json](#settings_schemajson)
+  - [imgix.liquid](#imgixliquid)
+  - [Enabling imgix Integration](#enabling-the-imgix-integration)
 - [Caveats & Warnings](#caveats--warnings)
 
-----------
+---
 
-## Disclaimer: 
+## Disclaimer:
+
 ## This guide presents a working solution for integrating imgix into your Shopify site. All configurations are made to work on top of Shopify’s front end and CDN, but will have certain limitations that are detailed in our [caveats & warnings](#caveats--warnings) section below. We cannot, unfortunately, guarantee expected results if at any time Shopify were to make changes to its system in ways that create breaking issues with this guide.
 
 ## Overview
@@ -19,23 +20,47 @@ imgix is easy to integrate with your Shopify store. To get started, you'll need 
 
 Once you've created your imgix account, it's time to set up the Source you'll use to serve your Shopify images. Head over to the [Sources section](https://dashboard.imgix.com/sources) of the Dashboard, and click the **Add a Source** button. On the Source creation page, fill out the form with the following information:
 
-
 - **Subdomain**: Anything you like. In this tutorial, the example will use the subdomain `imgix-shopify`.
 - **Source Type**: Web Folder
 - **Base URL**: https://cdn.shopify.com
 
 After everything is filled out, click **Create Source** to queue your new Source. On the next page, you should see the **Status** indicator change from **Queued** to **Deployed** after several minutes. At this point, imgix is fully configured and ready to integrate with Shopify!
 
+---
 
-----------
+### Pre-requisites
 
+- [An Imgix Source](#creating-an-imgix-source)
+- [Shopify CLI for local development](#developing-locally)
+
+#### Creating an Imgix Source
+
+Before starting, you need to connect an [Imgix Source](https://docs.imgix.com/getting-started/setup/creating-sources) to your Shopify assets.
+
+[Web Folder](https://docs.imgix.com/getting-started/setup/creating-sources/web folder) is the most common Source type for Shopify Sources, however you can use any other Source as long as it matches the path of your Shopify images.
+
+#### Developing Locally
+
+We recommend using the [Shopify CLI](https://shopify.dev/docs/api/shopify-cli) to clone and make changes locally to your theme. This allows you to preview changes in real time when modifying your theme. You can [follow this dev guide by Quratulaiinn](https://dev.to/quratulaiinn/setting-up-a-local-environment-for-shopify-theme-development-2ema) to learn about modifying your Shopify theme locally.
+
+Note that, when developing locally, your Shopify theme settings may not be synced. You can force some settings by adding this to your local `settings_data.json` file:
+
+```json
+{
+  ...
+  "enableImgix": true,
+  "imgixUrl": "https://example.imgix.net",
+  "imgixShopifyUrl": "//your_shop_id.myshopify.com/cdn/shop/files",
+  ...
+}
+
+```
 
 ## Installation / Configuration
 
 ### Shopify Theme Modification
 
-To begin serving your content with imgix, you'll need to make two changes to your Shopify theme. Special thanks to Jason Bowman at *Freakdesign* for creating the [initial version](https://freakdesign.com.au/blogs/news/91099207-how-to-use-imgix-with-shopify) of these files. You can access Shopify's theme file editor by going to `Online store > Themes > Customize > Theme actions > Edit Code`.
-
+To begin serving your content with imgix, you'll need to make two changes to your Shopify theme. Special thanks to Jason Bowman at _Freakdesign_ for creating the [initial version](https://freakdesign.com.au/blogs/news/91099207-how-to-use-imgix-with-shopify) (now outdated) of these files. You can access Shopify's theme file editor by going to `Online store > Themes > Customize > Theme actions > Edit Code`.
 
 ### settings_schema.json
 
@@ -60,16 +85,33 @@ The first change lets you configure your imgix installation from inside Shopify'
       "label": "imgix subdomain",
       "info": "The subdomain you set within imgix. Example: `https:\/\/mysite-shopify.imgix.net`."
     },
-    {
-      "type": "text",
-      "id": "imgixShopifyUrl",
-      "label": "Shopify CDN domain",
-      "default": "\/\/cdn.shopify.com",
-      "info": "Don't change this unless you have a proxy in place. Not sure? Leave it as is."
-    }
+      {
+        "type": "text",
+        "id": "imgixShopifyUrl",
+        "label": "Shopify CDN domain",
+        "default": "\/\/your_store_id.myshopify.com",
+        "info": "Change \"your_store_id\" to your shopify store ID. See the Readme for more information: https://github.com/imgix/shopify-integration-guide"
+      }
   ]
 },
 ```
+
+**imgixShopifyUrl**
+
+If you are using a [Web Folder Source](https://docs.imgix.com/en-US/getting-started/setup/creating-sources/web-folder) connected to your Shopify site, the `imgixShopifyUrl` value should match your Source's **Base URL path**. Examples:
+
+| Imgix Web Folder Base Path                        | imgixShopifyUrl                             |
+| ------------------------------------------------- | ------------------------------------------- |
+| https://myclothingstore.myshopify.com             | //myclothingstore.myshopify.com             |
+| https://myshoestore.myshopify.com/cdn/shop/files/ | //myshoestore.myshopify.com/cdn/shop/files/ |
+
+For other Source types, you should follow the same pattern of using the file path based on your Shopify file paths. Examples:
+
+| Imgix S3 Path Prefix | imgixShopifyUrl                              |
+| -------------------- | -------------------------------------------- |
+| /                    | //mybananastore.myshopify.com                |
+| /cdn/shop/files/     | //myapplestore.myshopify.com/cdn/shop/files/ |
+|                      |                                              |
 
 ### imgix.liquid
 
@@ -124,7 +166,7 @@ The second file adds a new Liquid tag that helps users generate imgix URLs. This
           {% assign imgWithQuerystring = imgWithQuerystring | append:_filter | append:'=' | append:[_filter] | append:'&' %}
         {% endif %}
       {% endfor %}
-          
+
       {% assign modifySrc = src | split:'?' | first | append: "?" %}
       {% assign newSrc = modifySrc | strip | replace:cdnUrl,imgixUrl | append:imgWithQuerystring %}
     {% endfor %}
@@ -139,7 +181,6 @@ The second file adds a new Liquid tag that helps users generate imgix URLs. This
 ### Enabling the imgix Integration
 
 Now that you've set up your Shopify theme to work with imgix, you can enable imgix in your theme settings. Head to `Online store > Themes > Customize`. Once there, you'll see an **imgix** option in the left-hand sidebar. Click on this to configure your imgix setup. It should look something like the following:
-
 
 - **Enable imgix**: Make sure this is checked.
 - **imgix** **Subdomain**: Whatever you set your Source subdomain to in step 1. In this example: `https://imgix-shopify.imgix.net`.
@@ -162,7 +203,7 @@ After:
 
 It's a good idea to always use the `master` variant of Shopify's images, and let imgix handle the resizing. That way, you'll always get the best quality image possible. Jason Bowman has created a [great demo page](https://freakdesign.com.au/pages/imgix-and-shopify-optimisation-demo) showcasing more potential uses of this tag.
 
-Here's another example of using imgix to easily build a responsive image using `srcset` and `sizes`: 
+Here's another example of using imgix to easily build a responsive image using `srcset` and `sizes`:
 
 ```html
 {% assign feat_img_url = product.featured_image | img_url:'master' %}
@@ -178,11 +219,10 @@ Here's another example of using imgix to easily build a responsive image using `
   "
   sizes="(min-width: 375px) 50vw, 100vw"
   alt="My awesome product"
->
+/>
 ```
 
 This example will result in an image sized to fill the whole viewport's width when below 375 pixels, and 50% of the viewport's width when at or above 375 pixels. [Eric Portis' post](https://ericportis.com/posts/2014/srcset-sizes/) on `srcset` and `sizes` is a great place to learn more about these responsive image tools.
-
 
 ## Caveats & Warnings
 
@@ -192,11 +232,18 @@ Shopify’s in-house templating language also allows for image resizing, similar
 ```html
 <ul class="grid product-single__thumbnails" id="ProductThumbs">
   {% for image in product.images %}
-    <li class="grid__item">
-      <a data-image-id="{{ image.id }}" href="{{ image.src | img_url: '1024x1024' }}" class="product-single__thumbnail">
-        <img src="{% render 'imgix', src:image.master h:263 %}" alt="{{ image.alt | escape }}">
-      </a>
-    </li>
+  <li class="grid__item">
+    <a
+      data-image-id="{{ image.id }}"
+      href="{{ image.src | img_url: '1024x1024' }}"
+      class="product-single__thumbnail"
+    >
+      <img
+        src="{% render 'imgix', src:image.master h:263 %}"
+        alt="{{ image.alt | escape }}"
+      />
+    </a>
+  </li>
   {% endfor %}
 </ul>
 ```
@@ -206,11 +253,9 @@ Shopify also provides its own set of Photo Editor tools for editing product imag
 
 An illustration:
 
-
 ![Found under the All products tab](https://assets.imgix.net/libraries/integration-guides/shopify/01-an_illustration.png?pad=40&w=926&mask-bg=2B3944&mask=corners&corner-radius=8&bg=2B3944&dpr=2&auto=compress,format)
 
 ![Opening an editing an image in Shopify](https://assets.imgix.net/libraries/integration-guides/shopify/02a-all_products.png?mark-y=0&mark-w=620&mark-pad=0&w=1300&pad-right=660&mark-x=960&mark64=aHR0cHM6Ly9hc3NldHMuaW1naXgubmV0L2xpYnJhcmllcy9pbnRlZ3JhdGlvbi1ndWlkZXMvc2hvcGlmeS8wMmItYWxsX3Byb2R1Y3RzLnBuZz9tYXNrPWNvcm5lcnMmY29ybmVyLXJhZGl1cz04&mask-bg=2B3944&mask=corners&corner-radius=8&bg=2B3944&auto=compress,format&pad=20&dpr=1.5)
-
 
 After saving the image and checking the product page, we see that the changes have not taken effect.
 
