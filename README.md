@@ -30,7 +30,7 @@ imgix is easy to integrate with your Shopify store. To get started, see the pre-
 
 Before starting, connect an [Imgix Source](https://docs.imgix.com/getting-started/setup/creating-sources) to your Shopify assets.
 
-[Web Folder](https://docs.imgix.com/getting-started/setup/creating-sources/web folder) is the most common Source type for Shopify Sources; however, you can use any other Source as long as it matches the path of your Shopify images.
+[Web Folder](https://docs.imgix.com/getting-started/setup/creating-sources/web-folder) is the most common Source type for Shopify Sources; however, you can use any other Source as long as it matches the path of your Shopify images.
 
 We'll provide a starting example with a Web Folder Source to make following this guide easier.
 
@@ -48,7 +48,7 @@ We recommend using the [Shopify CLI](https://shopify.dev/docs/api/shopify-cli) t
 
 Note that your Shopify theme settings may not be synced when developing locally. You can force some settings by adding this to your local `settings_data.json` file:
 
-"`json
+```json
 {
   ...
   "enableImgix": true,
@@ -69,7 +69,7 @@ To begin serving your content with imgix, you must make two changes to your Shop
 
 The first change lets you configure your imgix installation inside Shopify's theme settings. Copy the code below to the top of your theme's `Config/settings_schema.json` file inside the outermost pair of square brackets (`[ ]`). Add a comma (`,`) to the file following the `}` preceding where you paste this code in the snippet. You can also search for `settings_schema.json` in the search bar at the top to find it.
 
-"`json
+```json
 {
   "name": "imgix",
   "settings": [
@@ -120,7 +120,7 @@ You should follow the same pattern for other Source types when using the file pa
 
 The second file adds a new Liquid tag that helps users generate imgix URLs. This time, create a new file in your theme's `Snippets` directory named `imgix.liquid`. Copy the code below into that file, and save it:
 
-"`liquid
+```liquid
 {% capture IMGIX %}
  {% comment %}
  <!--
@@ -199,7 +199,7 @@ Before:
 
 After:
 
-"`liquid
+```liquid
 {% assign feat_img_url = product.featured_image | img_url:'master' %}
 {% render 'imgix', src:feat_img_url w:600 auto:'format' flip:'v' %}
 ```
@@ -208,7 +208,7 @@ It's a good idea to always use the `master` variant of Shopify's images and let 
 
 Here's another example of using imgix to quickly build a responsive image using `srcset` and `sizes`:
 
-"`html
+```html
 {% assign feat_img_url = product.featured_image | img_url:'master' %}
 
 <img
@@ -232,7 +232,7 @@ This example will result in an image sized to fill the whole viewport's width be
 **Native Resizing:**
 Shopify's in-house templating language, similar to imgix, also allows image resizing. However, we generally recommend only resizing your images by passing in imgix parameters rather than combining imgix and Shopify.
 
-"`html
+```html
 <ul class="grid product-single__thumbnails" id="ProductThumbs">
  {% for image in product.images %}  
   <li class="grid__item">
